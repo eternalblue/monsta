@@ -1,0 +1,18 @@
+{
+  "test_task": {
+    "steps": [
+      {
+        "description": "some get request",
+        "type": "http_request",
+        "endpoint": "https://jsonplaceholder.typicode.com/todos/1",
+        "method": "GET"
+      },
+      {
+        "description": "copy file from s3",
+        "type": "s3cpy",
+        "bucket": "https://jsonplaceholder.typicode.com/todos/1",
+        "key": "GET"
+      }
+    ]
+  }
+}
