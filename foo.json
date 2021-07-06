@@ -4,8 +4,14 @@
       {
         "description": "some get request",
         "type": "http_request",
-        "endpoint": "https://jsonplaceholder.typicode.com/todos/1",
+        "endpoint": "https://postman-echo.com/get",
         "method": "GET"
+      },
+      {
+        "description": "some POST request",
+        "type": "http_request",
+        "endpoint": "https://postman-echo.com/post",
+        "method": "POST"
       },
       {
         "description": "copy file from s3",

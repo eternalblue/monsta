@@ -14,7 +14,7 @@ func Run(spec Spec) error {
 		var lastOutput *string
 
 		for _, command := range *task.GetCommands() {
-			zap.L().Info("running command", zap.String("command", command.Type()))
+			zap.L().Info("running command", zap.String("type", command.Type()), zap.Any("command", command))
 			err := command.ValidateInput(lastOutput)
 			if err != nil {
 				return err
@@ -25,7 +25,7 @@ func Run(spec Spec) error {
 				return err
 			}
 
-			zap.L().Info("finishd command", zap.String("command", command.Type()), zap.Any("output", lastOutput))
+			zap.L().Info("finishd command", zap.String("type", command.Type()), zap.Any("output", lastOutput))
 		}
 	}
 
