@@ -15,6 +15,7 @@ func Run(spec Spec) error {
 
 		for _, command := range *task.GetCommands() {
 			zap.L().Info("running command", zap.String("type", command.Type()), zap.Any("command", command))
+
 			err := command.ValidateInput(lastOutput)
 			if err != nil {
 				return err
