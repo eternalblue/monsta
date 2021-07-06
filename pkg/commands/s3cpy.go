@@ -34,12 +34,7 @@ func (cmd *S3CpyCommand) Setup(params Parameters) error {
 		return err
 	}
 
-	client, err := utils.NewS3Client()
-	if err != nil {
-		return err
-	}
-
-	cmd.s3Client = client
+	cmd.s3Client = utils.DefaultS3Client
 	cmd.Bucket = bucket
 	cmd.Key = key
 

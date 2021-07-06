@@ -9,6 +9,8 @@ import (
 	"os"
 )
 
+var DefaultS3Client = must(NewS3Client())
+
 type S3Client struct {
 	sess *session.Session
 	svc  *s3.S3
@@ -16,7 +18,11 @@ type S3Client struct {
 
 // NewS3Client returns a new S3Client.
 func NewS3Client() (*S3Client, error) {
-	sess, err := session.NewSession()
+
+	cfg := aws.NewConfig()
+	cfg.Region = aws.String("us-east-1")
+
+	sess, err := session.NewSession(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -56,4 +62,12 @@ func (client S3Client) GetContent(bucket, key string) (string, error) {
 	}
 
 	return buf.String(), nil
+}
+
+func must(client *S3Client, err error) *S3Client {
+	if err != nil {
+		panic(err)
+	}
+
+	return client
 }

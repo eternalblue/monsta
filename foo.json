@@ -16,8 +16,8 @@
       {
         "description": "copy file from s3",
         "type": "s3cpy",
-        "bucket": "https://jsonplaceholder.typicode.com/todos/1",
-        "key": "GET"
+        "bucket": "mlproxyfiles",
+        "key": "frontend.yaml"
       }
     ]
   }
