@@ -10,7 +10,6 @@
       {
         "description": "format",
         "type": "format",
-        "method": "POST",
         "template": "{\\r\\n  \\\"host\\\": \\\"{{headers.host}}\\\"\\r\\n}",
         "encoding": "plain"
       }
