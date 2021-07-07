@@ -27,6 +27,7 @@ func NewS3CpyCommand(s3Client *utils.S3Client, bucket, key, path string) *S3CpyC
 
 func (cmd *S3CpyCommand) Setup(environment environment.Environment) error {
 	cmd.s3Client = environment.S3Client()
+
 	return nil
 }
 
@@ -43,14 +44,14 @@ func (cmd S3CpyCommand) Execute(input *string) (*string, error) {
 		}
 
 		return nil, nil
-	} else {
-		content, err := cmd.s3Client.GetContent(cmd.Bucket, cmd.Key)
-		if err != nil {
-			return nil, err
-		}
-
-		return &content, nil
 	}
+
+	content, err := cmd.s3Client.GetContent(cmd.Bucket, cmd.Key)
+	if err != nil {
+		return nil, err
+	}
+
+	return &content, nil
 }
 
 func (cmd S3CpyCommand) ValidateInput(input *string) error {

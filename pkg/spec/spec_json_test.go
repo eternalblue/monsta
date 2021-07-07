@@ -1,1 +1,1 @@
-package spec
+package spec_test

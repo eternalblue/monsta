@@ -28,7 +28,9 @@ func (t commandRegistry) GetInstance(name string) (Command, error) {
 		if tc, ok := reflect.New(typ).Interface().(Command); ok {
 			return tc, nil
 		}
+
 		return nil, fmt.Errorf("cannot assert %s as Command", name)
 	}
+
 	return nil, fmt.Errorf("command %s does not exists", name)
 }

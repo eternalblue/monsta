@@ -35,9 +35,9 @@ func (cmd HTTPRequestCommand) Execute(input *string) (*string, error) {
 		if input == nil {
 			if cmd.Body == "" {
 				return nil, ErrNilInput
-			} else {
-				input = &cmd.Body
 			}
+
+			input = &cmd.Body
 		}
 	} else {
 		input = utils.StrPointer("")
@@ -52,6 +52,8 @@ func (cmd HTTPRequestCommand) Execute(input *string) (*string, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	defer response.Body.Close()
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {

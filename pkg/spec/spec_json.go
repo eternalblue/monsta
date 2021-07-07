@@ -41,6 +41,7 @@ type JSON struct {
 // FromJSONFile given a path returns a JSON struct instance.
 func FromJSONFile(path string, environment environment.Environment) (*JSON, error) {
 	zap.L().Info("loading json", zap.String("path", path))
+
 	wd, err := os.Getwd()
 	if err != nil {
 		return nil, err
@@ -61,20 +62,20 @@ func FromJSONFile(path string, environment environment.Environment) (*JSON, erro
 }
 
 // FromJSONBytes returns a JSON from a byte array.
-func FromJSONBytes(json []byte) *JSON {
-	return &JSON{Content: json}
+func FromJSONBytes(json []byte, environment environment.Environment) *JSON {
+	return &JSON{Content: json, Environment: environment}
 }
 
-// Tasks return an array of tasks by parsing JSON.Content or an error if it fails
+// Tasks return an array of tasks by parsing JSON.Content or an error if it fails.
 func (spec JSON) Tasks() (*[]tasks.Task, error) {
 	zap.L().Info("parsing spec tasks")
-
-	var t []tasks.Task
 
 	jsonParsed, err := gabs.ParseJSON(spec.Content)
 	if err != nil {
 		return nil, err
 	}
+
+	t := make([]tasks.Task, 0, len(jsonParsed.S().ChildrenMap()))
 
 	for specEntryName, specEntry := range jsonParsed.S().ChildrenMap() {
 		zap.L().Debug("iterating json", zap.String("entry name", specEntryName))
@@ -100,7 +101,7 @@ func (spec JSON) Tasks() (*[]tasks.Task, error) {
 }
 
 func (spec JSON) parseSteps(steps *gabs.Container) (*[]commands.Command, error) {
-	var cmds []commands.Command
+	cmds := make([]commands.Command, 0, len(steps.Children()))
 
 	for _, step := range steps.Children() {
 		zap.L().Info("parsing step", zap.String("step", step.String()))
