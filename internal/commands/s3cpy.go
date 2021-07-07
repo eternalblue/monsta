@@ -1,9 +1,10 @@
 package commands
 
 import (
+	"os"
+
 	"github.com/eternalblue/monsta/pkg/environment"
 	"github.com/eternalblue/monsta/pkg/utils"
-	"os"
 )
 
 const s3CpyCommandType = "s3cpy"
@@ -44,7 +45,6 @@ func (cmd S3CpyCommand) Execute(input *string) (*string, error) {
 		return nil, nil
 	} else {
 		content, err := cmd.s3Client.GetContent(cmd.Bucket, cmd.Key)
-
 		if err != nil {
 			return nil, err
 		}

@@ -1,8 +1,9 @@
 package environment
 
 import (
-	"github.com/eternalblue/monsta/pkg/utils"
 	"net/http"
+
+	"github.com/eternalblue/monsta/pkg/utils"
 )
 
 // DefaultEnvironment with default settings. For a custom one, implement Environment interface.

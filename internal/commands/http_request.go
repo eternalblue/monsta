@@ -2,21 +2,20 @@ package commands
 
 import (
 	"errors"
-	"github.com/eternalblue/monsta/pkg/environment"
-	"github.com/eternalblue/monsta/pkg/utils"
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	"github.com/eternalblue/monsta/pkg/environment"
+	"github.com/eternalblue/monsta/pkg/utils"
 )
 
 const commandName = "http_request"
 
-var (
-	ErrNilInput = errors.New("input cannot be nil for http_request with POST Method")
-)
+var ErrNilInput = errors.New("input cannot be nil for http_request with POST Method")
 
-// HttpRequestCommand implementation.
-type HttpRequestCommand struct {
+// HTTPRequestCommand implementation.
+type HTTPRequestCommand struct {
 	client   *http.Client
 	Endpoint string `json:"endpoint"`
 	Method   string `validate:"required,oneof=GET POST PUT DELETE PATCH" json:"method"`
@@ -24,14 +23,14 @@ type HttpRequestCommand struct {
 }
 
 // Setup ...
-func (cmd *HttpRequestCommand) Setup(env environment.Environment) error {
+func (cmd *HTTPRequestCommand) Setup(env environment.Environment) error {
 	cmd.client = env.NetClient()
 
 	return nil
 }
 
-// Execute an HttpRequestCommand.
-func (cmd HttpRequestCommand) Execute(input *string) (*string, error) {
+// Execute an HTTPRequestCommand.
+func (cmd HTTPRequestCommand) Execute(input *string) (*string, error) {
 	if cmd.Method != http.MethodGet && cmd.Method != http.MethodDelete {
 		if input == nil {
 			if cmd.Body == "" {
@@ -45,7 +44,6 @@ func (cmd HttpRequestCommand) Execute(input *string) (*string, error) {
 	}
 
 	request, err := http.NewRequest(cmd.Method, cmd.Endpoint, strings.NewReader(*input))
-
 	if err != nil {
 		return nil, err
 	}
@@ -65,11 +63,11 @@ func (cmd HttpRequestCommand) Execute(input *string) (*string, error) {
 	return &output, nil
 }
 
-func (HttpRequestCommand) ValidateInput(input *string) error {
+func (HTTPRequestCommand) ValidateInput(input *string) error {
 	return nil
 }
 
-// Type returns the type of HttpRequestCommand.
-func (cmd HttpRequestCommand) Type() string {
+// Type returns the type of HTTPRequestCommand.
+func (cmd HTTPRequestCommand) Type() string {
 	return commandName
 }

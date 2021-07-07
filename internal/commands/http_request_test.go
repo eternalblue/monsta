@@ -5,5 +5,4 @@ import (
 )
 
 func TestHttpRequestCommand_FromParams(t *testing.T) {
-
 }

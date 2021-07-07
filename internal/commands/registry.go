@@ -13,7 +13,7 @@ type commandRegistry map[string]reflect.Type
 var Registry = make(commandRegistry)
 
 func init() {
-	Registry.set(new(HttpRequestCommand))
+	Registry.set(new(HTTPRequestCommand))
 	Registry.set(new(S3CpyCommand))
 	Registry.set(new(TemplateCommand))
 }

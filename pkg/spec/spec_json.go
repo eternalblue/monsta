@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+
 	"github.com/Jeffail/gabs/v2"
 	"github.com/eternalblue/monsta/internal/commands"
 	"github.com/eternalblue/monsta/internal/tasks"
@@ -11,7 +13,6 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/mitchellh/mapstructure"
 	"go.uber.org/zap"
-	"os"
 )
 
 const (
@@ -41,7 +42,6 @@ type JSON struct {
 func FromJSONFile(path string, environment environment.Environment) (*JSON, error) {
 	zap.L().Info("loading json", zap.String("path", path))
 	wd, err := os.Getwd()
-
 	if err != nil {
 		return nil, err
 	}
@@ -84,8 +84,7 @@ func (spec JSON) Tasks() (*[]tasks.Task, error) {
 		}
 
 		task := tasks.TaskImpl{
-			TaskName:
-			specEntryName,
+			TaskName: specEntryName,
 		}
 
 		steps, err := spec.parseSteps(specEntry.S(stepsKey))
