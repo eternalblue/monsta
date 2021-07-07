@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Jeffail/gabs/v2"
-	commands2 "github.com/eternalblue/monsta/internal/commands"
-	tasks2 "github.com/eternalblue/monsta/internal/tasks"
+	"github.com/eternalblue/monsta/internal/commands"
+	"github.com/eternalblue/monsta/internal/tasks"
 	"github.com/eternalblue/monsta/pkg/environment"
 	"github.com/go-playground/validator"
 	"github.com/mitchellh/mapstructure"
@@ -66,10 +66,10 @@ func FromJSONBytes(json []byte) *JSON {
 }
 
 // Tasks return an array of tasks by parsing JSON.Content or an error if it fails
-func (spec JSON) Tasks() (*[]tasks2.Task, error) {
+func (spec JSON) Tasks() (*[]tasks.Task, error) {
 	zap.L().Info("parsing spec tasks")
 
-	var t []tasks2.Task
+	var t []tasks.Task
 
 	jsonParsed, err := gabs.ParseJSON(spec.Content)
 	if err != nil {
@@ -83,7 +83,7 @@ func (spec JSON) Tasks() (*[]tasks2.Task, error) {
 			return nil, ErrMissingStepsKey
 		}
 
-		task := tasks2.TaskImpl{
+		task := tasks.TaskImpl{
 			TaskName:
 			specEntryName,
 		}
@@ -100,8 +100,8 @@ func (spec JSON) Tasks() (*[]tasks2.Task, error) {
 	return &t, nil
 }
 
-func (spec JSON) parseSteps(steps *gabs.Container) (*[]commands2.Command, error) {
-	var cmds []commands2.Command
+func (spec JSON) parseSteps(steps *gabs.Container) (*[]commands.Command, error) {
+	var cmds []commands.Command
 
 	for _, step := range steps.Children() {
 		zap.L().Info("parsing step", zap.String("step", step.String()))
@@ -112,7 +112,7 @@ func (spec JSON) parseSteps(steps *gabs.Container) (*[]commands2.Command, error)
 
 		cmdTypeString := step.Path(commandTypeKey).Data().(string)
 
-		cmdInstance, err := commands2.Registry.GetInstance(cmdTypeString)
+		cmdInstance, err := commands.Registry.GetInstance(cmdTypeString)
 		if err != nil {
 			return nil, err
 		}
