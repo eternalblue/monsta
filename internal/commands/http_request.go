@@ -2,11 +2,11 @@ package commands
 
 import (
 	"errors"
+	"github.com/eternalblue/monsta/pkg/environment"
+	"github.com/eternalblue/monsta/pkg/utils"
 	"io/ioutil"
 	"net/http"
 	"strings"
-
-	"github.com/eternalblue/monsta/pkg/utils"
 )
 
 const commandName = "http_request"
@@ -18,32 +18,14 @@ var (
 // HttpRequestCommand implementation.
 type HttpRequestCommand struct {
 	client   *http.Client
-	Endpoint string `validate:"required,url"`
-	Method   string `validate:"required,oneof=GET POST PUT DELETE PATCH"`
+	Endpoint string `json:"endpoint"`
+	Method   string `validate:"required,oneof=GET POST PUT DELETE PATCH" json:"method"`
 	Body     string
 }
 
 // Setup ...
-func (cmd *HttpRequestCommand) Setup(params Parameters) error {
-	endpoint, err := params.GetString("endpoint")
-	if err != nil {
-		return err
-	}
-
-	method, err := params.GetString("method")
-	if err != nil {
-		return err
-	}
-
-	body, err := params.GetString("body", true)
-	if err != nil {
-		return err
-	}
-
-	cmd.Endpoint = endpoint
-	cmd.Method = method
-	cmd.Body = body
-	cmd.client = http.DefaultClient
+func (cmd *HttpRequestCommand) Setup(env environment.Environment) error {
+	cmd.client = env.NetClient()
 
 	return nil
 }

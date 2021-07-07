@@ -15,6 +15,7 @@ var Registry = make(commandRegistry)
 func init() {
 	Registry.set(new(HttpRequestCommand))
 	Registry.set(new(S3CpyCommand))
+	Registry.set(new(TemplateCommand))
 }
 
 func (t commandRegistry) set(i Command) {

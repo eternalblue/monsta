@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"github.com/eternalblue/monsta/pkg/environment"
 	"github.com/eternalblue/monsta/pkg/utils"
 	"os"
 )
@@ -23,21 +24,8 @@ func NewS3CpyCommand(s3Client *utils.S3Client, bucket, key, path string) *S3CpyC
 	}
 }
 
-func (cmd *S3CpyCommand) Setup(params Parameters) error {
-	bucket, err := params.GetString("bucket")
-	if err != nil {
-		return err
-	}
-
-	key, err := params.GetString("key")
-	if err != nil {
-		return err
-	}
-
-	cmd.s3Client = utils.DefaultS3Client
-	cmd.Bucket = bucket
-	cmd.Key = key
-
+func (cmd *S3CpyCommand) Setup(environment environment.Environment) error {
+	cmd.s3Client = environment.S3Client()
 	return nil
 }
 

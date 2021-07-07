@@ -1,7 +1,9 @@
 package spec
 
-import "github.com/eternalblue/monsta/pkg/tasks"
+import (
+	tasks2 "github.com/eternalblue/monsta/internal/tasks"
+)
 
 type Spec interface {
-	Tasks() (*[]tasks.Task, error)
+	Tasks() (*[]tasks2.Task, error)
 }

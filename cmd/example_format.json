@@ -1,0 +1,19 @@
+{
+  "test_task": {
+    "steps": [
+      {
+        "description": "some get request",
+        "type": "http_request",
+        "endpoint": "https://postman-echo.com/get",
+        "method": "GET"
+      },
+      {
+        "description": "format",
+        "type": "format",
+        "method": "POST",
+        "template": "{\\r\\n  \\\"host\\\": \\\"{{headers.host}}\\\"\\r\\n}",
+        "encoding": "plain"
+      }
+    ]
+  }
+}

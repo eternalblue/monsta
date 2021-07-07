@@ -5,9 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Jeffail/gabs/v2"
-	"github.com/eternalblue/monsta/pkg/commands"
-	"github.com/eternalblue/monsta/pkg/tasks"
+	commands2 "github.com/eternalblue/monsta/internal/commands"
+	tasks2 "github.com/eternalblue/monsta/internal/tasks"
+	"github.com/eternalblue/monsta/pkg/environment"
 	"github.com/go-playground/validator"
+	"github.com/mitchellh/mapstructure"
 	"go.uber.org/zap"
 	"os"
 )
@@ -31,11 +33,12 @@ func init() {
 // JSON spec format.
 type JSON struct {
 	// Content is the content of the json in bytes.
-	Content []byte
+	Content     []byte
+	Environment environment.Environment
 }
 
 // FromJSONFile given a path returns a JSON struct instance.
-func FromJSONFile(path string) (*JSON, error) {
+func FromJSONFile(path string, environment environment.Environment) (*JSON, error) {
 	zap.L().Info("loading json", zap.String("path", path))
 	wd, err := os.Getwd()
 
@@ -50,7 +53,7 @@ func FromJSONFile(path string) (*JSON, error) {
 		return nil, err
 	}
 
-	jsonSpec := JSON{Content: b}
+	jsonSpec := JSON{Content: b, Environment: environment}
 
 	zap.L().Debug("json loaded", zap.String("content", string(b)))
 
@@ -63,10 +66,10 @@ func FromJSONBytes(json []byte) *JSON {
 }
 
 // Tasks return an array of tasks by parsing JSON.Content or an error if it fails
-func (spec JSON) Tasks() (*[]tasks.Task, error) {
+func (spec JSON) Tasks() (*[]tasks2.Task, error) {
 	zap.L().Info("parsing spec tasks")
 
-	var t []tasks.Task
+	var t []tasks2.Task
 
 	jsonParsed, err := gabs.ParseJSON(spec.Content)
 	if err != nil {
@@ -80,12 +83,12 @@ func (spec JSON) Tasks() (*[]tasks.Task, error) {
 			return nil, ErrMissingStepsKey
 		}
 
-		task := tasks.TaskImpl{
+		task := tasks2.TaskImpl{
 			TaskName:
 			specEntryName,
 		}
 
-		steps, err := parseSteps(specEntry.S(stepsKey))
+		steps, err := spec.parseSteps(specEntry.S(stepsKey))
 		if err != nil {
 			return nil, err
 		}
@@ -97,8 +100,8 @@ func (spec JSON) Tasks() (*[]tasks.Task, error) {
 	return &t, nil
 }
 
-func parseSteps(steps *gabs.Container) (*[]commands.Command, error) {
-	var cmds []commands.Command
+func (spec JSON) parseSteps(steps *gabs.Container) (*[]commands2.Command, error) {
+	var cmds []commands2.Command
 
 	for _, step := range steps.Children() {
 		zap.L().Info("parsing step", zap.String("step", step.String()))
@@ -109,7 +112,7 @@ func parseSteps(steps *gabs.Container) (*[]commands.Command, error) {
 
 		cmdTypeString := step.Path(commandTypeKey).Data().(string)
 
-		cmdInstance, err := commands.Registry.GetInstance(cmdTypeString)
+		cmdInstance, err := commands2.Registry.GetInstance(cmdTypeString)
 		if err != nil {
 			return nil, err
 		}
@@ -121,7 +124,12 @@ func parseSteps(steps *gabs.Container) (*[]commands.Command, error) {
 			return nil, err
 		}
 
-		err = cmdInstance.Setup(params)
+		err = mapstructure.Decode(params, &cmdInstance)
+		if err != nil {
+			return nil, err
+		}
+
+		err = cmdInstance.Setup(spec.Environment)
 		if err != nil {
 			return nil, err
 		}

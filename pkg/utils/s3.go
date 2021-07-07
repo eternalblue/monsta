@@ -17,12 +17,8 @@ type S3Client struct {
 }
 
 // NewS3Client returns a new S3Client.
-func NewS3Client() (*S3Client, error) {
-
-	cfg := aws.NewConfig()
-	cfg.Region = aws.String("us-east-1")
-
-	sess, err := session.NewSession(cfg)
+func NewS3Client(config ...*aws.Config) (*S3Client, error) {
+	sess, err := session.NewSession(config...)
 	if err != nil {
 		return nil, err
 	}
