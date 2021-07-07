@@ -16,15 +16,6 @@ type S3CpyCommand struct {
 	Path     string
 }
 
-func NewS3CpyCommand(s3Client *utils.S3Client, bucket, key, path string) *S3CpyCommand {
-	return &S3CpyCommand{
-		s3Client: s3Client,
-		Bucket:   bucket,
-		Key:      key,
-		Path:     path,
-	}
-}
-
 func (cmd *S3CpyCommand) Setup(environment environment.Environment) error {
 	cmd.s3Client = environment.S3Client()
 
